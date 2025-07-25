@@ -4,7 +4,12 @@ import cseLogo from './assets/CSE LOGO.jpg';
 import { Info, Palette, Target, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { useEffect } from 'react';
+
 const OpeningPage = () => {
+  useEffect(() => {
+    document.title = 'Trialthon of Tech | Home';
+  }, []);
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-white to-blue-100 relative flex flex-col items-center justify-start overflow-hidden">

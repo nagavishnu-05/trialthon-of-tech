@@ -3,7 +3,12 @@ import vcetLogo from './assets/VCET Logo.jpg';
 import cseLogo from './assets/CSE LOGO.jpg';
 import { useNavigate } from 'react-router-dom';
 
+import { useEffect } from 'react';
+
 const SignUp = () => {
+  useEffect(() => {
+    document.title = 'Trialthon of Tech | Sign Up';
+  }, []);
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-white to-blue-100 relative flex flex-col items-center justify-start overflow-hidden">
