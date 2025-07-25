@@ -2,6 +2,7 @@ import React from 'react';
 import vcetLogo from './assets/VCET Logo.jpg';
 import cseLogo from './assets/CSE LOGO.jpg';
 import { useNavigate } from 'react-router-dom';
+import { authenticateUser } from './auth/authHelpers';
 
 import { useEffect } from 'react';
 
@@ -10,6 +11,22 @@ const Login = () => {
     document.title = 'Trialthon of Tech | Login';
   }, []);
   const navigate = useNavigate();
+  const [error, setError] = React.useState('');
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const username = e.target.username.value;
+    const password = e.target.password.value;
+    const result = authenticateUser(username, password);
+    if (result?.role === 'student') {
+      navigate('/studentview');
+    } else if (result?.role === 'admin') {
+      navigate('/admin');
+    } else {
+      setError('Invalid username or password');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-white to-blue-100 relative flex flex-col items-center justify-start overflow-hidden">
       {/* Cloud shapes */}
@@ -55,15 +72,16 @@ const Login = () => {
       <div className="w-full flex justify-center z-10 pb-16">
         <div className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-8 glassmorphism">
           <h2 className="text-2xl font-bold text-center text-slate-800 mb-6">Trialthon of Tech : Team Login</h2>
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label className="block text-slate-700 font-semibold mb-1">Team Leader Roll No.</label>
-              <input type="text" placeholder="Enter your roll number" className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              <input name="username" type="text" placeholder="Enter your roll number" className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300" autoComplete="username" />
             </div>
             <div>
               <label className="block text-slate-700 font-semibold mb-1">Password</label>
-              <input type="password" placeholder="Enter your password" className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300" />
+              <input name="password" type="password" placeholder="Enter your password" className="w-full px-4 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300" autoComplete="current-password" />
             </div>
+            {error && <div className="text-red-600 text-center font-semibold">{error}</div>}
             <button type="submit" className="w-full mt-4 py-3 rounded-lg bg-blue-500 text-white font-bold text-lg shadow hover:bg-blue-600 transition">Login</button>
           </form>
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import vcetLogo from './assets/VCET Logo.jpg';
-import cseLogo from './assets/CSE LOGO.jpg';
+import vcetLogo from '../assets/VCET Logo.jpg';
+import cseLogo from '../assets/CSE LOGO.jpg';
 import { useNavigate } from 'react-router-dom';
 import StudentSidebar from '../components/StudentSidebar';
 
