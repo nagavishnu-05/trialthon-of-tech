@@ -21,16 +21,17 @@ const Login = () => {
       const res = await fetch("http://localhost:5000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          rollNo: username,
-          password: password,
-        }),
+        body: JSON.stringify({ rollNo: username, password }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
-        navigate("/admin");
+        if (data.role === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/studentView");
+        }
       } else {
         setError("Invalid username or password");
       }
