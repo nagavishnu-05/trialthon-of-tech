@@ -11,7 +11,7 @@ const AdminView = () => {
   const [marks, setMarks] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/teams")
+    fetch("https://trialthon-of-tech-backend.onrender.com/api/teams")
       .then((res) => res.json())
       .then((data) => {
         // Calculate total for each team
@@ -44,18 +44,23 @@ const AdminView = () => {
             nontech: marks[teamId].nontech ?? team.nontech ?? 0,
           };
 
-          await fetch(`http://localhost:5000/api/teams/${teamId}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedMarks),
-          });
+          await fetch(
+            `https://trialthon-of-tech-backend.onrender.com/api/teams/${teamId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(updatedMarks),
+            }
+          );
         }
       }
 
       // Re-fetch updated data
-      const res = await fetch("http://localhost:5000/api/teams");
+      const res = await fetch(
+        "https://trialthon-of-tech-backend.onrender.com/api/teams"
+      );
       const updated = await res.json();
       const teamsWithTotal = updated.map((team) => ({
         ...team,
@@ -76,7 +81,6 @@ const AdminView = () => {
       alert("Failed to submit marks");
     }
   };
-
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">

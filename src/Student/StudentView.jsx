@@ -12,7 +12,7 @@ const StudentView = () => {
   useEffect(() => {
     document.title = "Trialthon of Tech | Student View";
 
-    fetch("http://localhost:5000/api/teams")
+    fetch("https://trialthon-of-tech-backend.onrender.com/api/teams")
       .then((res) => res.json())
       .then((data) => {
         const teamsWithTotal = data.map((team) => ({

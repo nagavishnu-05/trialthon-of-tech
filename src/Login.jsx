@@ -18,11 +18,14 @@ const Login = () => {
     const username = e.target.username.value.trim().toLowerCase();
     const password = e.target.password.value;
     try {
-      const res = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rollNo: username, password }),
-      });
+      const res = await fetch(
+        "https://trialthon-of-tech-backend.onrender.com/api/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rollNo: username, password }),
+        }
+      );
 
       const data = await res.json();
 
