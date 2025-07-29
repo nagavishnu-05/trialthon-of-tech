@@ -50,19 +50,25 @@ router.get("/teams", async (req, res) => {
 });
 
 // 🔐 Login Route
+
 router.post("/login", async (req, res) => {
-  const { rollNo, password } = req.body;
+  let { rollNo, password } = req.body;
+  rollNo = rollNo.trim().toLowerCase();
+  password = password.trim();
 
   // Check admin login
   const admin = adminUsers.find(
-    (u) => u.rollNo === rollNo && u.password === password
+    (u) => u.rollNo.toLowerCase() === rollNo && u.password === password
   );
   if (admin) {
     return res.json({ success: true, message: "Admin Login", role: "admin" });
   }
 
-  // Check registered team login
-  const team = await Team.findOne({ rollNo, password });
+  // Check registered team login (normalize rollNo in DB too)
+  const team = await Team.findOne({
+    rollNo: { $regex: new RegExp(`^${rollNo}$`, "i") },
+    password,
+  });
   if (team) {
     return res.json({
       success: true,
@@ -76,9 +82,10 @@ router.post("/login", async (req, res) => {
 });
 
 // 📝 Signup Route
+
 router.post("/signup", async (req, res) => {
   try {
-    const {
+    let {
       teamName,
       year,
       leaderName,
@@ -93,6 +100,8 @@ router.post("/signup", async (req, res) => {
       member2Roll,
       member2Contact,
     } = req.body;
+
+    rollNo = rollNo.trim().toLowerCase();
 
     const existing = await Team.findOne({ rollNo });
     if (existing) {
@@ -132,5 +141,49 @@ router.post("/signup", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+
+// PUT /api/teams/:id
+router.put("/teams/:id", async (req, res) => {
+  try {
+    const updated = await Team.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
+    res.json(updated);
+  } catch (error) {
+    console.error("Signup error:", error);
+    res.status(500).json({ error: "Failed to update team marks" });
+  }
+});
+
+// ✅ GET /api/student/details?teamId=XXXX
+router.get("/student/details", async (req, res) => {
+  const { teamId } = req.query;
+
+  if (!teamId) {
+    return res.status(400).json({ message: "teamId is required" });
+  }
+
+  try {
+    const team = await Team.findById(teamId);
+    if (!team) {
+      return res.status(404).json({ message: "Team not found" });
+    }
+
+    res.json({
+      student: {
+        name: team.leaderName,
+        email: team.rollNo,
+        department: team.year,
+        teamName: team.teamName,
+      },
+    });
+  } catch (err) {
+    console.error("Error fetching student data:", err);
+    res.status(500).json({ message: "Failed to fetch student data" });
+  }
+});
+
 
 module.exports = router;

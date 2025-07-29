@@ -41,6 +41,10 @@ const SignUp = () => {
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (data.teamId) {
+          localStorage.setItem("teamId", data.teamId);
+          sessionStorage.setItem("teamId", data.teamId); // optional fallback
+        }
         alert("Team Registered Successfully");
         navigate("/studentView");
       } else {

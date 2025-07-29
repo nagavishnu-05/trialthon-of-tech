@@ -15,7 +15,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const username = e.target.username.value;
+    const username = e.target.username.value.trim().toLowerCase();
     const password = e.target.password.value;
     try {
       const res = await fetch("http://localhost:5000/api/login", {
@@ -30,6 +30,10 @@ const Login = () => {
         if (data.role === "admin") {
           navigate("/admin");
         } else {
+          if (data.teamId) {
+            localStorage.setItem("teamId", data.teamId);
+            sessionStorage.setItem("teamId", data.teamId); // optional
+          }
           navigate("/studentView");
         }
       } else {

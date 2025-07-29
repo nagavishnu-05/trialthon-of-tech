@@ -12,16 +12,18 @@ const StudentView = () => {
   useEffect(() => {
     document.title = "Trialthon of Tech | Student View";
 
-    fetch("http://localhost:5000/api/teams") // Change if backend is hosted online
+    fetch("http://localhost:5000/api/teams")
       .then((res) => res.json())
       .then((data) => {
-        // Calculate total score
         const teamsWithTotal = data.map((team) => ({
           ...team,
-          total: team.design + team.aptitude + team.coding + team.nontech,
+          total:
+            (team.design || 0) +
+            (team.aptitude || 0) +
+            (team.coding || 0) +
+            (team.nontech || 0),
         }));
 
-        // Sort and assign rank
         const sorted = teamsWithTotal
           .sort((a, b) => b.total - a.total)
           .map((team, index) => ({ ...team, rank: index + 1 }));
@@ -32,7 +34,6 @@ const StudentView = () => {
   }, []);
 
   const handleLogout = () => {
-    // Implement your logout logic here (e.g., clearing tokens, redirecting)
     navigate("/");
   };
 
@@ -89,12 +90,14 @@ const StudentView = () => {
         </div>
       </div>
 
-      {/* Main content for StudentView goes here */}
+      {/* Main content */}
       <div className="flex flex-row w-full max-w-7xl mx-auto z-10 pb-16 mt-0 min-h-[70vh]">
         <div className="flex-shrink-0">
           <StudentSidebar selected={selected} onSelect={setSelected} />
         </div>
+
         <div className="flex-1 bg-white/90 rounded-2xl shadow-xl p-10 ml-8 glassmorphism min-h-[500px] flex flex-col justify-start">
+          {/* ===== All Teams ===== */}
           {selected === "all" ? (
             <div>
               <h2 className="flex items-center gap-3 mb-6 text-2xl font-extrabold text-blue-900">
@@ -183,108 +186,154 @@ const StudentView = () => {
               </div>
             </div>
           ) : (
-            <div>
-              <h2 className="flex items-center gap-4 mb-8 text-3xl font-extrabold text-green-900">
-                <span className="inline-block px-5 py-2 text-xl font-bold text-green-700 bg-green-100 rounded-full shadow">
-                  My Team
-                </span>
-              </h2>
-              <div className="mb-6">
-                <div className="mb-2 text-2xl font-bold text-green-700">
-                  Team Name:{" "}
-                  <span className="text-slate-800">My Awesome Team</span>
-                </div>
-                <div className="flex flex-col gap-1 pl-2">
-                  <span className="text-lg font-semibold text-slate-700">
-                    Team Leader:{" "}
-                    <span className="font-bold text-green-900">John Doe</span>
-                  </span>
-                  <span className="text-lg text-slate-700">
-                    Member 1: <span className="font-semibold">Alice</span>
-                  </span>
-                  <span className="text-lg text-slate-700">
-                    Member 2: <span className="font-semibold">Bob</span>
-                  </span>
-                </div>
-              </div>
-              <div className="max-w-2xl p-6 mt-8 shadow bg-green-50 rounded-xl">
-                <h3 className="pb-2 mb-6 text-2xl font-bold text-green-800 border-b-2 border-green-200">
-                  Round Wise Score
-                </h3>
-                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                  {/* Column 1: Design and Coding */}
-                  <div>
-                    <div className="mb-8">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xl font-bold text-blue-900">
-                          Design
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
-                        <span className="text-lg text-slate-700">
-                          Total Marks: <span className="font-bold">50</span>
-                        </span>
-                        <span className="text-lg text-green-700">
-                          Your Score: <span className="font-bold">24</span>
-                        </span>
-                      </div>
-                      <hr className="my-3 border-green-200" />
+            /* ===== My Team (dynamic) ===== */
+            (() => {
+              const storedId =
+                localStorage.getItem("teamId") ||
+                sessionStorage.getItem("teamId");
+
+              const myTeam = teamData.find(
+                (t) => String(t._id) === String(storedId)
+              );
+
+              if (!storedId || !myTeam) {
+                return (
+                  <div className="text-lg font-semibold text-red-600">
+                    Team details not found. Please log in again.
+                  </div>
+                );
+              }
+
+              return (
+                <div>
+                  <h2 className="flex items-center gap-4 mb-8 text-3xl font-extrabold text-green-900">
+                    <span className="inline-block px-5 py-2 text-xl font-bold text-green-700 bg-green-100 rounded-full shadow">
+                      My Team
+                    </span>
+                  </h2>
+
+                  <div className="mb-6">
+                    <div className="mb-2 text-2xl font-bold text-green-700">
+                      Team Name:{" "}
+                      <span className="text-slate-800">{myTeam.teamName}</span>
                     </div>
-                    <div className="mb-2">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xl font-bold text-blue-900">
-                          Coding
+                    <div className="flex flex-col gap-1 pl-2">
+                      <span className="text-lg font-semibold text-slate-700">
+                        Team Leader:{" "}
+                        <span className="font-bold text-green-900">
+                          {myTeam.leaderName}
                         </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
-                        <span className="text-lg text-slate-700">
-                          Total Marks: <span className="font-bold">50</span>
+                      </span>
+                      <span className="text-lg text-slate-700">
+                        Member 1:{" "}
+                        <span className="font-semibold">
+                          {myTeam.member1?.name || "—"}
                         </span>
-                        <span className="text-lg text-green-700">
-                          Your Score: <span className="font-bold">40</span>
+                      </span>
+                      <span className="text-lg text-slate-700">
+                        Member 2:{" "}
+                        <span className="font-semibold">
+                          {myTeam.member2?.name || "—"}
                         </span>
-                      </div>
-                      <hr className="my-3 border-green-200" />
+                      </span>
                     </div>
                   </div>
-                  {/* Column 2: Aptitude and Non Tech */}
-                  <div>
-                    <div className="mb-8">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xl font-bold text-blue-900">
-                          Aptitude
-                        </span>
+
+                  <div className="max-w-2xl p-6 mt-8 shadow bg-green-50 rounded-xl">
+                    <h3 className="pb-2 mb-6 text-2xl font-bold text-green-800 border-b-2 border-green-200">
+                      Round Wise Score
+                    </h3>
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                      {/* Column 1: Design and Coding */}
+                      <div>
+                        <div className="mb-8">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-xl font-bold text-blue-900">
+                              Design
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
+                            <span className="text-lg text-slate-700">
+                              Total Marks: <span className="font-bold">50</span>
+                            </span>
+                            <span className="text-lg text-green-700">
+                              Your Score:{" "}
+                              <span className="font-bold">
+                                {myTeam.design || 0}
+                              </span>
+                            </span>
+                          </div>
+                          <hr className="my-3 border-green-200" />
+                        </div>
+
+                        <div className="mb-2">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-xl font-bold text-blue-900">
+                              Coding
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
+                            <span className="text-lg text-slate-700">
+                              Total Marks: <span className="font-bold">50</span>
+                            </span>
+                            <span className="text-lg text-green-700">
+                              Your Score:{" "}
+                              <span className="font-bold">
+                                {myTeam.coding || 0}
+                              </span>
+                            </span>
+                          </div>
+                          <hr className="my-3 border-green-200" />
+                        </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
-                        <span className="text-lg text-slate-700">
-                          Total Marks: <span className="font-bold">50</span>
-                        </span>
-                        <span className="text-lg text-green-700">
-                          Your Score: <span className="font-bold">18</span>
-                        </span>
+
+                      {/* Column 2: Aptitude and Non Tech */}
+                      <div>
+                        <div className="mb-8">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-xl font-bold text-blue-900">
+                              Aptitude
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
+                            <span className="text-lg text-slate-700">
+                              Total Marks: <span className="font-bold">50</span>
+                            </span>
+                            <span className="text-lg text-green-700">
+                              Your Score:{" "}
+                              <span className="font-bold">
+                                {myTeam.aptitude || 0}
+                              </span>
+                            </span>
+                          </div>
+                          <hr className="my-3 border-green-200" />
+                        </div>
+
+                        <div className="mb-2">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-xl font-bold text-blue-900">
+                              Non Tech
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
+                            <span className="text-lg text-slate-700">
+                              Total Marks: <span className="font-bold">50</span>
+                            </span>
+                            <span className="text-lg text-green-700">
+                              Your Score:{" "}
+                              <span className="font-bold">
+                                {myTeam.nontech || 0}
+                              </span>
+                            </span>
+                          </div>
+                          <hr className="my-3 border-green-200" />
+                        </div>
                       </div>
-                      <hr className="my-3 border-green-200" />
-                    </div>
-                    <div className="mb-2">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-xl font-bold text-blue-900">
-                          Non Tech
-                        </span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4 pl-4 mb-1">
-                        <span className="text-lg text-slate-700">
-                          Total Marks: <span className="font-bold">50</span>
-                        </span>
-                        <span className="text-lg text-green-700">
-                          Your Score: <span className="font-bold">10</span>
-                        </span>
-                      </div>
-                      <hr className="my-3 border-green-200" />
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              );
+            })()
           )}
         </div>
       </div>

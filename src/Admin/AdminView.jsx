@@ -8,13 +8,75 @@ const AdminView = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState("results");
   const [teams, setTeams] = useState([]);
+  const [marks, setMarks] = useState({});
 
   useEffect(() => {
     fetch("http://localhost:5000/api/teams")
       .then((res) => res.json())
-      .then((data) => setTeams(data))
+      .then((data) => {
+        // Calculate total for each team
+        const teamsWithTotal = data.map((team) => ({
+          ...team,
+          total:
+            (team.design || 0) +
+            (team.aptitude || 0) +
+            (team.coding || 0) +
+            (team.nontech || 0),
+        }));
+        // Sort and assign rank
+        const sorted = teamsWithTotal
+          .sort((a, b) => b.total - a.total)
+          .map((team, index) => ({ ...team, rank: index + 1 }));
+        setTeams(sorted);
+      })
       .catch((err) => console.error("Fetch error:", err));
   }, []);
+
+  const handleSubmitMarks = async () => {
+    try {
+      for (const team of teams) {
+        const teamId = team._id;
+        if (marks[teamId]) {
+          const updatedMarks = {
+            design: marks[teamId].design ?? team.design ?? 0,
+            aptitude: marks[teamId].aptitude ?? team.aptitude ?? 0,
+            coding: marks[teamId].coding ?? team.coding ?? 0,
+            nontech: marks[teamId].nontech ?? team.nontech ?? 0,
+          };
+
+          await fetch(`http://localhost:5000/api/teams/${teamId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedMarks),
+          });
+        }
+      }
+
+      // Re-fetch updated data
+      const res = await fetch("http://localhost:5000/api/teams");
+      const updated = await res.json();
+      const teamsWithTotal = updated.map((team) => ({
+        ...team,
+        total:
+          (team.design || 0) +
+          (team.aptitude || 0) +
+          (team.coding || 0) +
+          (team.nontech || 0),
+      }));
+      const sorted = teamsWithTotal
+        .sort((a, b) => b.total - a.total)
+        .map((team, index) => ({ ...team, rank: index + 1 }));
+      setTeams(sorted);
+      setMarks({}); // ✅ Reset marks input
+      alert("Marks submitted successfully!");
+    } catch (err) {
+      console.error("Error submitting marks:", err);
+      alert("Failed to submit marks");
+    }
+  };
+
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
@@ -115,14 +177,20 @@ const AdminView = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-blue-50">
-                    {teams.map((team, idx) => {
-                      const total =
-                        (team.design || 0) +
-                        (team.aptitude || 0) +
-                        (team.coding || 0) +
-                        (team.nontech || 0);
-
-                      return (
+                    {(() => {
+                      // Calculate total and rank dynamically for display
+                      const teamsWithTotal = teams.map((team) => ({
+                        ...team,
+                        total:
+                          (team.design || 0) +
+                          (team.aptitude || 0) +
+                          (team.coding || 0) +
+                          (team.nontech || 0),
+                      }));
+                      const sorted = teamsWithTotal
+                        .sort((a, b) => b.total - a.total)
+                        .map((team, index) => ({ ...team, rank: index + 1 }));
+                      return sorted.map((team, idx) => (
                         <tr
                           key={team._id}
                           className="transition hover:bg-blue-50"
@@ -146,14 +214,14 @@ const AdminView = () => {
                             {team.nontech || 0}
                           </td>
                           <td className="px-2 py-4 text-lg font-bold text-center text-blue-900">
-                            {total}
+                            {team.total}
                           </td>
                           <td className="px-4 py-4 text-lg font-bold text-green-700">
-                            -
+                            {team.rank}
                           </td>
                         </tr>
-                      );
-                    })}
+                      ));
+                    })()}
                   </tbody>
                 </table>
               </div>
@@ -191,21 +259,10 @@ const AdminView = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {[
-                      "Alpha Coders",
-                      "Tech Titans",
-                      "Debuggers",
-                      "Code Ninjas",
-                      "Byte Masters",
-                      "Quantum Crew",
-                      "Script Squad",
-                      "Logic Lords",
-                      "Syntax Savages",
-                      "Pixel Pioneers",
-                    ].map((team, idx) => (
-                      <tr key={team}>
+                    {teams.map((team, idx) => (
+                      <tr key={team._id}>
                         <td className="px-4 py-3 text-lg font-semibold text-slate-800">
-                          {team}
+                          {team.teamName}
                         </td>
                         <td className="px-4 py-3 text-center">
                           <input
@@ -215,6 +272,16 @@ const AdminView = () => {
                             max="50"
                             className="w-24 px-2 py-1 text-lg text-center border rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
                             placeholder="0-50"
+                            defaultValue={team.design || ""}
+                            onChange={(e) =>
+                              setMarks((prev) => ({
+                                ...prev,
+                                [team._id]: {
+                                  ...prev[team._id],
+                                  design: Number(e.target.value),
+                                },
+                              }))
+                            }
                           />
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -225,6 +292,16 @@ const AdminView = () => {
                             max="20"
                             className="w-24 px-2 py-1 text-lg text-center border rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
                             placeholder="0-20"
+                            defaultValue={team.aptitude || ""}
+                            onChange={(e) =>
+                              setMarks((prev) => ({
+                                ...prev,
+                                [team._id]: {
+                                  ...prev[team._id],
+                                  aptitude: Number(e.target.value),
+                                },
+                              }))
+                            }
                           />
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -235,6 +312,16 @@ const AdminView = () => {
                             max="20"
                             className="w-24 px-2 py-1 text-lg text-center border rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
                             placeholder="0-20"
+                            defaultValue={team.coding || ""}
+                            onChange={(e) =>
+                              setMarks((prev) => ({
+                                ...prev,
+                                [team._id]: {
+                                  ...prev[team._id],
+                                  coding: Number(e.target.value),
+                                },
+                              }))
+                            }
                           />
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -245,6 +332,16 @@ const AdminView = () => {
                             max="10"
                             className="w-24 px-2 py-1 text-lg text-center border rounded focus:outline-none focus:ring-2 focus:ring-blue-200"
                             placeholder="0-10"
+                            defaultValue={team.nontech || ""}
+                            onChange={(e) =>
+                              setMarks((prev) => ({
+                                ...prev,
+                                [team._id]: {
+                                  ...prev[team._id],
+                                  nontech: Number(e.target.value),
+                                },
+                              }))
+                            }
                           />
                         </td>
                       </tr>
@@ -253,7 +350,8 @@ const AdminView = () => {
                 </table>
                 <div className="flex justify-end mt-6">
                   <button
-                    type="submit"
+                    type="button"
+                    onClick={handleSubmitMarks}
                     className="px-8 py-3 text-lg font-bold text-white transition bg-green-600 shadow rounded-xl hover:bg-green-700"
                   >
                     Submit Marks
