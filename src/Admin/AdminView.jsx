@@ -85,9 +85,12 @@ const AdminView = () => {
 
   const handleServerDownload = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/export-teams", {
-        method: "GET",
-      });
+      const response = await fetch(
+        "https://trialthon-of-tech-backend.onrender.com/api/export-teams",
+        {
+          method: "GET",
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to download Excel from server");
 
