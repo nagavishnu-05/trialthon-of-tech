@@ -85,14 +85,19 @@ const AdminView = () => {
   };
 
    const handleDownloadExcel = () => {
-     const dataToExport = teams.map((team, index) => ({
-       S_No: index + 1,
-       Team_Name: team.teamName,
+     const dataToExport = teams.map((team) => ({
+       "Team Name": team.teamName,
        Year: team.year,
-       Leader: team.leaderName,
-       Roll_No: team.rollNumber,
-       Contact: team.contactNumber,
-       Language: team.language,
+       "Leader Name": team.leaderName,
+       "Leader Roll No": team.rollNo,
+       "Leader Contact": team.contactNo,
+       "Preferred Language": team.language,
+       "Member 1 Name": team.member1?.name || "",
+       "Member 1 Roll": team.member1?.roll || "",
+       "Member 1 Contact": team.member1?.contact || "",
+       "Member 2 Name": team.member2?.name || "",
+       "Member 2 Roll": team.member2?.roll || "",
+       "Member 2 Contact": team.member2?.contact || "",
      }));
 
      const worksheet = XLSX.utils.json_to_sheet(dataToExport);
