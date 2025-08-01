@@ -10,6 +10,12 @@ const AdminView = () => {
   const [selected, setSelected] = useState("results");
   const [teams, setTeams] = useState([]);
   const [marks, setMarks] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const role = localStorage.getItem("role");
+    if (role === "admin") setIsAdmin(true);
+  }, []);
 
   useEffect(() => {
     fetch("https://trialthon-of-tech-backend.onrender.com/api/teams")
@@ -82,47 +88,30 @@ const AdminView = () => {
       alert("Failed to submit marks");
     }
   };
-  
-  const handleDownloadExcel = () => {
-    const dataToExport = teams.map((team) => ({
-      "Team Name": team.teamName,
-      Year: team.year,
-      "Leader Name": team.leaderName,
-      "Leader Roll No": team.rollNo,
-      "Leader Contact": team.contactNo,
-      "Preferred Language": team.language,
-      "Member 1 Name": team.member1?.name || "",
-      "Member 1 Roll": team.member1?.rollNo || "",
-      "Member 1 Contact": team.member1?.contact || "",
-      "Member 2 Name": team.member2?.name || "",
-      "Member 2 Roll": team.member2?.rollNo || "",
-      "Member 2 Contact": team.member2?.contact || "",
-    }));
 
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+  const handleServerDownload = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/export-teams", {
+        method: "GET",
+      });
 
-    // Match column widths to backend
-    worksheet["!cols"] = [
-      { wch: 20 }, // Team Name
-      { wch: 10 }, // Year
-      { wch: 20 }, // Leader Name
-      { wch: 15 }, // Leader Roll No
-      { wch: 15 }, // Leader Contact
-      { wch: 20 }, // Preferred Language
-      { wch: 20 }, // Member 1 Name
-      { wch: 15 }, // Member 1 Roll
-      { wch: 15 }, // Member 1 Contact
-      { wch: 20 }, // Member 2 Name
-      { wch: 15 }, // Member 2 Roll
-      { wch: 15 }, // Member 2 Contact
-    ];
+      if (!response.ok) throw new Error("Failed to download Excel from server");
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Teams");
-
-    XLSX.writeFile(workbook, "Trialthon_Teams.xlsx");
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "Trialthon_Teams_Server.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed:", err);
+      alert("Failed to download Excel. Please try again.");
+    }
   };
-  
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <header className="relative z-10 flex items-center justify-between w-full px-8 pt-12 pb-4 max-w-7xl">
@@ -173,13 +162,17 @@ const AdminView = () => {
                   Total Team Results
                 </span>
               </h2>
-              <div className="flex justify-end mb-4">
-                <button
-                  onClick={handleDownloadExcel}
-                  className="flex items-center gap-2 px-5 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
-                >
-                  📥 Download Excel
-                </button>
+              <div className="flex flex-col items-end gap-2 mb-4">
+                {isAdmin && (
+                  <div className="flex justify-end mb-4">
+                    <button
+                      onClick={handleServerDownload}
+                      className="flex items-center gap-2 px-5 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+                    >
+                      📥 Download Excel (Server)
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* You can copy the All Team Activity table here or import as a separate component */}
