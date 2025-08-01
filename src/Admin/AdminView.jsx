@@ -10,12 +10,6 @@ const AdminView = () => {
   const [selected, setSelected] = useState("results");
   const [teams, setTeams] = useState([]);
   const [marks, setMarks] = useState({});
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const role = localStorage.getItem("role");
-    if (role === "admin") setIsAdmin(true);
-  }, []);
 
   useEffect(() => {
     fetch("https://trialthon-of-tech-backend.onrender.com/api/teams")
@@ -163,16 +157,14 @@ const AdminView = () => {
                 </span>
               </h2>
               <div className="flex flex-col items-end gap-2 mb-4">
-                {isAdmin && (
-                  <div className="flex justify-end mb-4">
-                    <button
-                      onClick={handleServerDownload}
-                      className="flex items-center gap-2 px-5 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
-                    >
-                      📥 Download Excel (Server)
-                    </button>
-                  </div>
-                )}
+                <div className="flex justify-end mb-4">
+                  <button
+                    onClick={handleServerDownload}
+                    className="flex items-center gap-2 px-5 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+                  >
+                    📥 Download Excel (Server)
+                  </button>
+                </div>
               </div>
 
               {/* You can copy the All Team Activity table here or import as a separate component */}
