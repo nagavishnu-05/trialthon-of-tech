@@ -86,28 +86,28 @@ const AdminView = () => {
   const handleServerDownload = async () => {
     try {
       const response = await fetch(
-        "https://trialthon-of-tech-backend.onrender.com/api/export-teams",
-        {
-          method: "GET",
-        }
+        "https://trialthon-of-tech-backend.onrender.com/export-teams"
       );
 
-      if (!response.ok) throw new Error("Failed to download Excel from server");
+      if (!response.ok) {
+        throw new Error("Failed to fetch Excel file");
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "Trialthon_Teams_Server.xlsx";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "team_registrations.xlsx";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (err) {
-      console.error("Download failed:", err);
+    } catch (error) {
+      console.error("Error downloading Excel:", error);
       alert("Failed to download Excel. Please try again.");
     }
   };
+
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
