@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import vcetLogo from "../assets/VCET Logo.jpg";
 import cseLogo from "../assets/CSE LOGO.jpg";
 import AdminSidebar from "../components/AdminSidebar";
+import * as XLSX from "xlsx";
+
 
 const AdminView = () => {
   const navigate = useNavigate();
@@ -82,6 +84,25 @@ const AdminView = () => {
     }
   };
 
+   const handleDownloadExcel = () => {
+     const dataToExport = teams.map((team, index) => ({
+       S_No: index + 1,
+       Team_Name: team.teamName,
+       Year: team.year,
+       Leader: team.leaderName,
+       Roll_No: team.rollNumber,
+       Contact: team.contactNumber,
+       Language: team.language,
+     }));
+
+     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+     const workbook = XLSX.utils.book_new();
+     XLSX.utils.book_append_sheet(workbook, worksheet, "Teams");
+
+     XLSX.writeFile(workbook, "Trialthon_Teams.xlsx");
+   };
+
+  
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <header className="relative z-10 flex items-center justify-between w-full px-8 pt-12 pb-4 max-w-7xl">
@@ -132,6 +153,15 @@ const AdminView = () => {
                   Total Team Results
                 </span>
               </h2>
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleDownloadExcel}
+                  className="flex items-center gap-2 px-5 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                >
+                  📥 Download Excel
+                </button>
+              </div>
+
               {/* You can copy the All Team Activity table here or import as a separate component */}
               <div className="overflow-x-auto">
                 <table className="min-w-full overflow-hidden border-collapse shadow-lg table-auto rounded-xl">
