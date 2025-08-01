@@ -82,7 +82,7 @@ const AdminView = () => {
       alert("Failed to submit marks");
     }
   };
-
+  
   const handleDownloadExcel = () => {
     const dataToExport = teams.map((team) => ({
       "Team Name": team.teamName,
@@ -92,33 +92,37 @@ const AdminView = () => {
       "Leader Contact": team.contactNo,
       "Preferred Language": team.language,
       "Member 1 Name": team.member1?.name || "",
-      "Member 1 Roll": team.member1?.roll || "",
+      "Member 1 Roll": team.member1?.rollNo || "",
       "Member 1 Contact": team.member1?.contact || "",
       "Member 2 Name": team.member2?.name || "",
-      "Member 2 Roll": team.member2?.roll || "",
+      "Member 2 Roll": team.member2?.rollNo || "",
       "Member 2 Contact": team.member2?.contact || "",
     }));
 
-    // 1. Create worksheet
     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
 
-    // 2. Auto-fit column widths
-    const columnWidths = Object.keys(dataToExport[0]).map((key) => {
-      const maxLength = Math.max(
-        key.length,
-        ...dataToExport.map((row) => String(row[key] || "").length)
-      );
-      return { wch: maxLength + 2 }; // +2 for padding
-    });
-    worksheet["!cols"] = columnWidths;
+    // Match column widths to backend
+    worksheet["!cols"] = [
+      { wch: 20 }, // Team Name
+      { wch: 10 }, // Year
+      { wch: 20 }, // Leader Name
+      { wch: 15 }, // Leader Roll No
+      { wch: 15 }, // Leader Contact
+      { wch: 20 }, // Preferred Language
+      { wch: 20 }, // Member 1 Name
+      { wch: 15 }, // Member 1 Roll
+      { wch: 15 }, // Member 1 Contact
+      { wch: 20 }, // Member 2 Name
+      { wch: 15 }, // Member 2 Roll
+      { wch: 15 }, // Member 2 Contact
+    ];
 
-    // 3. Create workbook and export
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Teams");
 
     XLSX.writeFile(workbook, "Trialthon_Teams.xlsx");
   };
-
+  
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <header className="relative z-10 flex items-center justify-between w-full px-8 pt-12 pb-4 max-w-7xl">
