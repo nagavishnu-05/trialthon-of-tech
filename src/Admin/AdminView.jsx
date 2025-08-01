@@ -5,7 +5,6 @@ import cseLogo from "../assets/CSE LOGO.jpg";
 import AdminSidebar from "../components/AdminSidebar";
 import * as XLSX from "xlsx";
 
-
 const AdminView = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState("results");
@@ -84,30 +83,42 @@ const AdminView = () => {
     }
   };
 
-   const handleDownloadExcel = () => {
-     const dataToExport = teams.map((team) => ({
-       "Team Name": team.teamName,
-       Year: team.year,
-       "Leader Name": team.leaderName,
-       "Leader Roll No": team.rollNo,
-       "Leader Contact": team.contactNo,
-       "Preferred Language": team.language,
-       "Member 1 Name": team.member1?.name || "",
-       "Member 1 Roll": team.member1?.roll || "",
-       "Member 1 Contact": team.member1?.contact || "",
-       "Member 2 Name": team.member2?.name || "",
-       "Member 2 Roll": team.member2?.roll || "",
-       "Member 2 Contact": team.member2?.contact || "",
-     }));
+  const handleDownloadExcel = () => {
+    const dataToExport = teams.map((team) => ({
+      "Team Name": team.teamName,
+      Year: team.year,
+      "Leader Name": team.leaderName,
+      "Leader Roll No": team.rollNo,
+      "Leader Contact": team.contactNo,
+      "Preferred Language": team.language,
+      "Member 1 Name": team.member1?.name || "",
+      "Member 1 Roll": team.member1?.roll || "",
+      "Member 1 Contact": team.member1?.contact || "",
+      "Member 2 Name": team.member2?.name || "",
+      "Member 2 Roll": team.member2?.roll || "",
+      "Member 2 Contact": team.member2?.contact || "",
+    }));
 
-     const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-     const workbook = XLSX.utils.book_new();
-     XLSX.utils.book_append_sheet(workbook, worksheet, "Teams");
+    // 1. Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
 
-     XLSX.writeFile(workbook, "Trialthon_Teams.xlsx");
-   };
+    // 2. Auto-fit column widths
+    const columnWidths = Object.keys(dataToExport[0]).map((key) => {
+      const maxLength = Math.max(
+        key.length,
+        ...dataToExport.map((row) => String(row[key] || "").length)
+      );
+      return { wch: maxLength + 2 }; // +2 for padding
+    });
+    worksheet["!cols"] = columnWidths;
 
-  
+    // 3. Create workbook and export
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Teams");
+
+    XLSX.writeFile(workbook, "Trialthon_Teams.xlsx");
+  };
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <header className="relative z-10 flex items-center justify-between w-full px-8 pt-12 pb-4 max-w-7xl">
