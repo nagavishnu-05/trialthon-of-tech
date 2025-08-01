@@ -95,6 +95,9 @@ const AdminView = () => {
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
+      new Blob([blob], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
       const link = document.createElement("a");
       link.href = url;
       link.download = "team_registrations.xlsx";
@@ -107,7 +110,6 @@ const AdminView = () => {
       alert("Failed to download Excel. Please try again.");
     }
   };
-
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
