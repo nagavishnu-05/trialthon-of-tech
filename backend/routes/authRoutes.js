@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const ExcelJS = require("exceljs"); // Add this with other requires at the top if you want
 
 // Hardcoded Admins
 const adminUsers = [
@@ -85,6 +86,15 @@ router.post("/login", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   try {
+    // Check total registered teams
+    const teamCount = await Team.countDocuments();
+    if (teamCount >= 20) {
+      return res.status(403).json({
+        success: false,
+        message: "Registration limit reached. Only 20 teams are allowed.",
+      });
+    }
+
     let {
       teamName,
       year,
@@ -185,5 +195,64 @@ router.get("/student/details", async (req, res) => {
   }
 });
 
+// ✅ Export registered teams to Excel
+router.get("/export-teams", async (req, res) => {
+  try {
+    const teams = await Team.find();
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Registered Teams");
+
+    // Define columns
+    worksheet.columns = [
+      { header: "Team Name", key: "teamName", width: 20 },
+      { header: "Year", key: "year", width: 10 },
+      { header: "Leader Name", key: "leaderName", width: 20 },
+      { header: "Leader Roll No", key: "rollNo", width: 15 },
+      { header: "Leader Contact", key: "contactNo", width: 15 },
+      { header: "Preferred Language", key: "language", width: 20 },
+      { header: "Member 1 Name", key: "member1Name", width: 20 },
+      { header: "Member 1 Roll", key: "member1Roll", width: 15 },
+      { header: "Member 1 Contact", key: "member1Contact", width: 15 },
+      { header: "Member 2 Name", key: "member2Name", width: 20 },
+      { header: "Member 2 Roll", key: "member2Roll", width: 15 },
+      { header: "Member 2 Contact", key: "member2Contact", width: 15 },
+    ];
+
+    // Add rows to worksheet
+    teams.forEach((team) => {
+      worksheet.addRow({
+        teamName: team.teamName,
+        year: team.year,
+        leaderName: team.leaderName,
+        rollNo: team.rollNo,
+        contactNo: team.contactNo,
+        language: team.language,
+        member1Name: team.member1.name,
+        member1Roll: team.member1.rollNo,
+        member1Contact: team.member1.contact,
+        member2Name: team.member2.name,
+        member2Roll: team.member2.rollNo,
+        member2Contact: team.member2.contact,
+      });
+    });
+
+    // Set headers for Excel download
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=team_registrations.xlsx"
+    );
+
+    await workbook.xlsx.write(res); // Write Excel to response
+    res.end(); // End the response
+  } catch (err) {
+    console.error("Excel export error:", err);
+    res.status(500).send("Failed to export Excel");
+  }
+});
 
 module.exports = router;

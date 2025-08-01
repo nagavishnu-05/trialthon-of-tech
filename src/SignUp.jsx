@@ -2,7 +2,6 @@ import React from "react";
 import vcetLogo from "./assets/VCET Logo.jpg";
 import cseLogo from "./assets/CSE LOGO.jpg";
 import { useNavigate } from "react-router-dom";
-
 import { useEffect } from "react";
 
 const SignUp = () => {
@@ -46,7 +45,7 @@ const SignUp = () => {
       if (res.ok && data.success) {
         if (data.teamId) {
           localStorage.setItem("teamId", data.teamId);
-          sessionStorage.setItem("teamId", data.teamId); // optional fallback
+          sessionStorage.setItem("teamId", data.teamId);
         }
         alert("Team Registered Successfully");
         navigate("/studentView");
@@ -61,6 +60,7 @@ const SignUp = () => {
 
   return (
     <div className="relative flex flex-col items-center justify-start min-h-screen overflow-hidden bg-gradient-to-b from-white via-white to-blue-100">
+      {/* Decorative background elements */}
       <div
         className="absolute top-10 left-[10vw] w-[400px] h-[120px] bg-white opacity-70 rounded-full blur-2xl z-0"
         style={{
@@ -74,6 +74,7 @@ const SignUp = () => {
         }}
       ></div>
 
+      {/* Header */}
       <header className="relative z-10 flex items-center justify-between w-full px-8 pt-12 pb-4 max-w-7xl">
         <div className="flex items-center gap-4">
           <button
@@ -106,12 +107,14 @@ const SignUp = () => {
         </div>
       </header>
 
+      {/* Department Info */}
       <div className="z-10 flex justify-center w-full mt-8 mb-4">
         <div className="px-8 py-4 font-sans text-xl font-semibold text-center shadow-lg glassmorphism rounded-xl md:text-2xl text-slate-700">
           Department of Computer Science and Engineering
         </div>
       </div>
 
+      {/* Form */}
       <div className="z-10 flex justify-center w-full pb-16">
         <div className="w-full max-w-5xl p-8 shadow-xl bg-white/90 rounded-2xl glassmorphism">
           <h2 className="mb-6 text-2xl font-bold text-center text-slate-800">
@@ -126,6 +129,7 @@ const SignUp = () => {
                 <input
                   type="text"
                   placeholder="Enter your team name"
+                  required
                   className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
@@ -133,7 +137,10 @@ const SignUp = () => {
                 <label className="block mb-1 font-semibold text-slate-700">
                   Year
                 </label>
-                <select className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <select
+                  required
+                  className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
                   <option value="">Select year</option>
                   <option value="II">II</option>
                   <option value="III">III</option>
@@ -151,6 +158,7 @@ const SignUp = () => {
                 <input
                   type="text"
                   placeholder="Leader's name"
+                  required
                   className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
@@ -161,6 +169,7 @@ const SignUp = () => {
                 <input
                   type="text"
                   placeholder="Leader's roll no"
+                  required
                   className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
@@ -171,6 +180,7 @@ const SignUp = () => {
                 <input
                   type="tel"
                   placeholder="Leader's contact no."
+                  required
                   className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
@@ -181,6 +191,7 @@ const SignUp = () => {
                 <input
                   type="password"
                   placeholder="Create a password"
+                  required
                   className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 />
               </div>
@@ -188,7 +199,10 @@ const SignUp = () => {
                 <label className="block mb-1 font-semibold text-slate-700">
                   Code Language Prefer
                 </label>
-                <select className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                <select
+                  required
+                  className="w-full px-4 py-2 border rounded-lg border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                >
                   <option value="">Select language</option>
                   <option value="C">C</option>
                   <option value="Java">Java</option>
@@ -201,6 +215,7 @@ const SignUp = () => {
 
             <hr className="col-span-2 my-2 border-t-2 border-dashed border-slate-300" />
 
+            {/* Optional Member 1 */}
             <div className="grid grid-cols-2 col-span-2 gap-6">
               <div>
                 <label className="block mb-1 font-semibold text-slate-700">
@@ -239,6 +254,7 @@ const SignUp = () => {
 
             <hr className="col-span-2 my-2 border-t-2 border-dashed border-slate-300" />
 
+            {/* Optional Member 2 */}
             <div className="grid grid-cols-2 col-span-2 gap-6">
               <div>
                 <label className="block mb-1 font-semibold text-slate-700">
@@ -275,7 +291,7 @@ const SignUp = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <div className="col-span-2">
               <button
                 type="submit"
