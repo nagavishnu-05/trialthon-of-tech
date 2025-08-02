@@ -166,7 +166,7 @@ const AdminView = () => {
               <div className="flex justify-end mb-4">
                 <button
                   onClick={handleExcelDownload}
-                  className="px-4 py-2 font-semibold text-white bg-blue-500 rounded shadow hover:bg-blue-600"
+                  className="px-5 py-2 font-semibold text-white transition duration-200 bg-blue-500 shadow-lg rounded-2xl hover:bg-blue-600"
                 >
                   📥 Download Excel
                 </button>
