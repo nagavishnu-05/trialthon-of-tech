@@ -83,31 +83,32 @@ const AdminView = () => {
     }
   };
 
-  const handleServerDownload = async () => {
+  const handleExcelDownload = async () => {
     try {
       const response = await fetch(
-        "https://trialthon-of-tech-backend.onrender.com/export-teams"
+        "https://trialthon-of-tech-backend.onrender.com/api/export-teams",
+        {
+          method: "GET",
+        }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to fetch Excel file");
+        throw new Error("Failed to download Excel");
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-      new Blob([blob], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "team_registrations.xlsx";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "team_registrations.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error("Error downloading Excel:", error);
-      alert("Failed to download Excel. Please try again.");
+      console.error("Excel download error:", error);
+      alert("Failed to download Excel file.");
     }
   };
 
@@ -161,16 +162,13 @@ const AdminView = () => {
                   Total Team Results
                 </span>
               </h2>
-              <div className="flex flex-col items-end gap-2 mb-4">
-                <div className="flex justify-end mb-4">
-                  <button
-                    onClick={handleServerDownload}
-                    className="flex items-center gap-2 px-5 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
-                  >
-                    📥 Download Excel (Server)
-                  </button>
-                </div>
-              </div>
+
+              <button
+                onClick={handleExcelDownload}
+                className="px-5 py-2 ml-4 font-semibold text-blue-700 transition border border-blue-200 shadow rounded-xl bg-white/70 hover:bg-blue-100 backdrop-blur-md"
+              >
+                📥 Download Excel
+              </button>
 
               {/* You can copy the All Team Activity table here or import as a separate component */}
               <div className="overflow-x-auto">
