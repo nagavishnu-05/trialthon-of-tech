@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import vcetLogo from "../assets/VCET Logo.jpg";
 import cseLogo from "../assets/CSE LOGO.jpg";
 import AdminSidebar from "../components/AdminSidebar";
-import * as XLSX from "xlsx";
 
 const AdminView = () => {
   const navigate = useNavigate();
