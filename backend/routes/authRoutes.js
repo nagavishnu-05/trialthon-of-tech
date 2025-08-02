@@ -91,7 +91,8 @@ router.post("/signup", async (req, res) => {
     if (teamCount >= 20) {
       return res.status(403).json({
         success: false,
-        message: "Registration limit reached. Only 20 teams are allowed.",
+        message:
+          "Thank you for your interest! We’ve reached the maximum of 20 teams",
       });
     }
 
