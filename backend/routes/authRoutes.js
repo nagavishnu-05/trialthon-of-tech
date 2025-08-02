@@ -14,13 +14,13 @@ const adminUsers = [
 
 // MongoDB Model
 const teamSchema = new mongoose.Schema({
-  teamName: String,
-  year: String,
-  leaderName: String,
-  rollNo: String,
-  contactNo: String,
-  password: String,
-  language: String,
+  teamName: { type: String, required: true, unique: true },
+  year: { type: String, required: true },
+  leaderName: { type: String, required: true, unique: true },
+  rollNo: { type: String, required: true, unique: true },
+  contactNo: { type: String, required: true, unique: true },
+  password: { type: String, required: true, unique: true },
+  language: { type: String, required: true },
   member1: {
     name: String,
     rollNo: String,
@@ -142,14 +142,22 @@ router.post("/signup", async (req, res) => {
     });
 
     await newTeam.save();
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Team registered successfully",
       teamId: newTeam._id,
     });
   } catch (error) {
     console.error("Signup error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+    // ✅ Handle duplicate key error
+    if (error.code === 11000) {
+      const duplicateField = Object.keys(error.keyValue)[0];
+      return res.status(400).json({
+        success: false,
+        message: `${duplicateField} already exists.`,
+      });
+    }
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
