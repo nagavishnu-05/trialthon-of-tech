@@ -101,7 +101,7 @@ const AdminView = () => {
 
       const a = document.createElement("a");
       a.href = url;
-      a.download = "team_registrations.xlsx";
+      a.download = "Trialthon Teams.xlsx";
       document.body.appendChild(a);
       a.click();
       a.remove();
