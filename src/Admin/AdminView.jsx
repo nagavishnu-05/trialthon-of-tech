@@ -163,12 +163,14 @@ const AdminView = () => {
                 </span>
               </h2>
 
-              <button
-                onClick={handleExcelDownload}
-                className="px-5 py-2 ml-4 font-semibold text-blue-700 transition border border-blue-200 shadow rounded-xl bg-white/70 hover:bg-blue-100 backdrop-blur-md"
-              >
-                📥 Download Excel
-              </button>
+              <div className="flex justify-end mb-4">
+                <button
+                  onClick={handleExcelDownload}
+                  className="px-4 py-2 font-semibold text-white bg-blue-500 rounded shadow hover:bg-blue-600"
+                >
+                  📥 Download Excel
+                </button>
+              </div>
 
               {/* You can copy the All Team Activity table here or import as a separate component */}
               <div className="overflow-x-auto">
