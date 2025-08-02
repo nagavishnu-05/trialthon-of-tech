@@ -157,13 +157,13 @@ const AdminView = () => {
         <div className="flex-1 bg-white/90 rounded-2xl shadow-xl p-10 ml-8 glassmorphism min-h-[500px] flex flex-col justify-start">
           {selected === "results" ? (
             <div>
-              <h2 className="flex items-center gap-3 mb-6 text-2xl font-extrabold text-blue-900">
-                <span className="inline-block px-3 py-1 text-lg font-semibold text-blue-700 bg-blue-100 rounded-full">
-                  Total Team Results
-                </span>
-              </h2>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="flex items-center gap-3 mb-6 text-2xl font-extrabold text-blue-900">
+                  <span className="inline-block px-3 py-1 text-lg font-semibold text-blue-700 bg-blue-100 rounded-full">
+                    Total Team Results
+                  </span>
+                </h2>
 
-              <div className="flex justify-end mb-4">
                 <button
                   onClick={handleExcelDownload}
                   className="px-5 py-2 font-semibold text-white transition duration-200 bg-blue-500 shadow-lg rounded-2xl hover:bg-blue-600"
