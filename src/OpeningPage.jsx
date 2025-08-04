@@ -1,7 +1,7 @@
 import React from 'react';
 import vcetLogo from './assets/VCET Logo.jpg';
 import cseLogo from './assets/CSE LOGO.jpg';
-import { Info, Palette, Target, Users } from 'lucide-react';
+import { Info, Palette, Target, Users, MessageCircleMore } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { useEffect } from 'react';
@@ -78,6 +78,7 @@ const OpeningPage = () => {
         </div>
       </div>
 
+      {/* Features Section */}
       <div className="relative flex justify-center items-center w-full pb-16">
         <div className="grid grid-cols-4 gap-6 w-full max-w-5xl">
           <div className="glassmorphism bg-white/90 shadow-xl rounded-3xl px-4 py-8 flex flex-col items-center text-center h-full">
@@ -113,6 +114,66 @@ const OpeningPage = () => {
             <p className="text-slate-700 text-sm leading-snug">
               Teams of 3. Roles are flexible—adapt, collaborate, and deliver your best as a group.
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Patrons and Organizers Section */}
+      <div className="w-full max-w-5xl mx-auto mb-16 grid grid-cols-2 gap-8">
+        {/* Chief Patron Box */}
+        <div className="glassmorphism bg-white/90 shadow-xl rounded-3xl px-6 py-8 flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-blue-600 mb-4">Chief Patron</h2>
+          <h3 className="text-2xl font-bold text-slate-800 mb-2">Shri. M. V. Muthuramalingam</h3>
+          <p className="text-slate-600 text-lg">Chairman</p>
+        </div>
+
+        {/* Patron Box */}
+        <div className="glassmorphism bg-white/90 shadow-xl rounded-3xl px-6 py-8 flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-blue-600 mb-4">Patron</h2>
+          <h3 className="text-2xl font-bold text-slate-800 mb-2">Dr. P. Alli</h3>
+          <p className="text-slate-600 text-lg">Principal</p>
+        </div>
+
+        {/* Convenor Box */}
+        <div className="glassmorphism bg-white/90 shadow-xl rounded-3xl px-6 py-8 flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-blue-600 mb-4">Convenor</h2>
+          <h3 className="text-2xl font-bold text-slate-800 mb-2">Dr. G. Vinoth Chakaravarthy</h3>
+          <p className="text-slate-600 text-lg">HOD CSE</p>
+        </div>
+
+        {/* Faculty Incharges Box */}
+        <div className="glassmorphism bg-white/90 shadow-xl rounded-3xl px-6 py-8 flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-blue-600 mb-4">Faculty Incharges</h2>
+          <div className="space-y-3">
+            <div>
+              <h3 className="text-xl font-bold text-slate-800">Mr. G. Balamuralikrishnan</h3>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-800">Mrs. A. Benazir Begum</h3>
+            </div>
+          </div>
+        </div>
+
+        {/* Student Coordinators Box - Spans full width */}
+        <div className="col-span-2 glassmorphism bg-white/90 shadow-xl rounded-3xl px-6 py-8 flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-blue-600 mb-4">Student Coordinators</h2>
+          <div className="grid grid-cols-2 gap-8">
+            <div className="flex flex-col items-center space-y-3">
+              <h3 className="text-xl font-bold text-slate-800">Nagavishnu Karthik B S</h3>
+              <a href="https://wa.me/+919600338213" target="_blank" rel="noopener noreferrer" 
+                 className="flex items-center space-x-2 text-green-600 hover:text-green-700 transition-colors">
+                <MessageCircleMore className="w-5 h-5" />
+                <span>+91 96003 38213</span>
+              </a>
+            </div>
+            <div className="flex flex-col items-center space-y-3">
+              <h3 className="text-xl font-bold text-slate-800">Mukesh Kanna M</h3>
+              <a href="https://wa.me/+916369923519" target="_blank" rel="noopener noreferrer" 
+                 className="flex items-center space-x-2 text-green-600 hover:text-green-700 transition-colors">
+                <MessageCircleMore className="w-5 h-5" />
+                <span>+91 63699 23519</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
