@@ -88,11 +88,11 @@ router.post("/signup", async (req, res) => {
   try {
     // Check total registered teams
     const teamCount = await Team.countDocuments();
-    if (teamCount >= 20) {
+    if (teamCount >= 30) {
       return res.status(403).json({
         success: false,
         message:
-          "Thank you for your interest! We’ve reached the maximum of 20 teams",
+          "Thank you for your interest! We’ve reached the maximum of 30 teams",
       });
     }
 
